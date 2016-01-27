@@ -19,8 +19,13 @@ if(Meteor.isClient){
       }
     },
     'points': function() {
-      var points = Session.get('points');
-      return points;
+      var pointsForPlayer;
+      if(Session.get('points')) {
+        pointsForPlayer = Session.get('points');
+      } else {
+        pointsForPlayer = 1;
+      }
+      return pointsForPlayer;
     },
     'showSelectedPlayer': function() {
       var selectedPlayer = Session.get('selectedPlayer');
@@ -36,17 +41,19 @@ if(Meteor.isClient){
     },
     'click .increment': function() {
       var selectedPlayer = Session.get('selectedPlayer');
-      PlayersList.update(selectedPlayer, {$inc: {score: 5}});
-      console.log("added 5 points to ", selectedPlayer);
+      var points = Session.get('points');
+      PlayersList.update(selectedPlayer, {$inc: {score: points}});
+      console.log("added ", points, " points to ", selectedPlayer);
     },
     'click .decrement': function() {
       var selectedPlayer = Session.get('selectedPlayer');
-      PlayersList.update(selectedPlayer, {$inc: {score: -5}});
-      console.log("removed 5 points from ", selectedPlayer)
+      var points = Session.get('points');
+      PlayersList.update(selectedPlayer, {$inc: {score: -points}});
+      console.log("removed ", points," points from ", selectedPlayer)
     },
     'change .points': function(event) {
       var points = event.target.value;
-      Session.set('points', points);
+      Session.set('points', Number(points));
       console.log(points);
     },
     'click .remove': function() {
@@ -61,7 +68,7 @@ if(Meteor.isClient){
     'submit form': function(event) {
       event.preventDefault();
       var playerNameVar = event.target.playerName.value;
-      var playerScoreVar = event.target.playerScore.value;
+      var playerScoreVar = Number(event.target.playerScore.value);
       PlayersList.insert({
         name: playerNameVar,
         score: playerScoreVar
@@ -69,8 +76,9 @@ if(Meteor.isClient){
       console.log("form submitted!")
       console.log(event.type)
       console.log(playerNameVar);
+      console.log(playerScoreVar)
       event.target.playerName.value = '';
-      event.target.playerScore.value = '';
+      event.target.playerScore.value = 1;
     }
   });
 
