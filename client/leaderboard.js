@@ -19,8 +19,9 @@ Template.leaderboard.helpers({
     if(Session.get('points')) {
       pointsForPlayer = Session.get('points');
     } else {
-      pointsForPlayer = 1;
+      pointsForPlayer = Session.set('points', 1);
     }
+    console.log(pointsForPlayer);
     return pointsForPlayer;
   },
   'showSelectedPlayer': function() {
